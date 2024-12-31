@@ -1,0 +1,34 @@
+library(dplyr)
+library(tidyr)
+
+urttab <- read.csv("urtall.csv")
+
+
+df1 <- urttab %>%
+  filter(
+    measure_name == "YLDs (Years Lived with Disability)",
+    metric_name == "Rate"
+  )
+
+
+clean_df <- df1 %>%
+  filter( location_name %in% c("Andorra","Austria", "Belgium", "Cyprus", "Denmark", "Finland", "France", "Germany",
+                               "Greece", "Iceland", "Ireland", "Israel", "Italy", "Luxembourg", "Malta",
+                               "Monaco", "Netherlands", "Norway", "Portugal", "San Marino", "Spain", "Sweden",
+                               "Switzerland", "United Kingdom", "Albania", "Bosnia and Herzegovina",
+                               "Bulgaria", "Croatia", "Czechia", "Hungary", "North Macedonia", "Montenegro", "Poland",
+                               "Romania", "Serbia", "Slovakia", "Slovenia", "Belarus", "Estonia", "Latvia",
+                               "Lithuania", "Republic of Moldova", "Russian Federation", "Ukraine")
+  )
+
+df2 <- read.csv("sdi_all_years.csv")
+
+
+
+merged_df <- clean_df %>%
+  left_join(
+    df2,
+    by = c("location_name","year")
+  )
+
+write.csv(merged_df, "df.csv")
