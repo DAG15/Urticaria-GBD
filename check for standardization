@@ -1,0 +1,53 @@
+data <- data.frame(
+  age_group = c("65 to 74", "75 to 84", "85 to 94", "95 plus"),
+  crude_daly = c(10307612, 12787796, 5544605, 451854),
+  population = c(17637002, 12734543, 3518999, 206896),
+  std_pop = c(10500, 6500, 2300, 200)
+)
+
+# Calculate crude rates per 100,000
+data$crude_rate <- (data$crude_daly / data$population) * 100000
+
+# Calculate weights from standard population
+data$std_weight <- data$std_pop / sum(data$std_pop)
+
+# Calculate expected events in standard population
+data$weighted_rate <- data$crude_rate * data$std_weight
+
+# Calculate directly standardized rate
+dsr <- sum(data$weighted_rate)
+print(dsr)
+
+# Calculate variance for confidence intervals
+data$variance <- (data$crude_daly * (data$std_weight^2)) / (data$population^2)
+se_dsr <- sqrt(sum(data$variance))
+
+# Calculate 95% confidence intervals
+ci_lower <- dsr - (1.96 * se_dsr)
+ci_upper <- dsr + (1.96 * se_dsr)
+
+# Print results
+cat(sprintf("Directly Standardized Rate: %.2f per 100,000\n", dsr))
+cat(sprintf("95%% CI: (%.2f, %.2f)", ci_lower, ci_upper))
+
+
+# Create the data frame with the observed data
+data <- data.frame(
+  age_group = c("65 to 74", "75 to 84", "85 to 94", "95 plus"),
+  crude_daly = c(12205323, 10206771, 2601366, 120893),
+  population = c(13108525, 7180460, 1349634, 50866),
+  std_pop = c(10500, 6500, 2300, 200)
+)
+
+# Calculate crude rates per 100,000
+data$crude_rate <- (data$crude_daly / data$population) * 100000
+
+# Calculate weights from standard population
+data$std_weight <- data$std_pop / sum(data$std_pop)
+
+# Calculate age-specific standardized rates
+data$age_specific_standardized_rate <- data$crude_rate * data$std_weight
+
+# Print results by age group
+print(data[, c("age_group", "age_specific_standardized_rate")])
+
